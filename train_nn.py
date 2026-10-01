@@ -17,12 +17,13 @@ from tensorflow.keras import callbacks, layers
 RANDOM_STATE = 42
 keras.utils.set_random_seed(RANDOM_STATE)
 
-# ----------------------------- данные -----------------------------
+# Данные
 df1 = pd.read_excel('data/X_bp.xlsx')
 df2 = pd.read_excel('data/X_nup.xlsx')
 df = df1.merge(df2, left_index=True, right_index=True,
                how='inner', suffixes=('', '_2'))
-df = df.drop(columns=[c for c in df.columns if 'Unnamed' in c])
+df = df.drop(columns=[c for c in df.columns
+                      if 'Unnamed' in c or c.lower().startswith('id')])
 df['Угол нашивки, град'] = df['Угол нашивки, град'].replace(90, 1)
 df = df[df['Плотность нашивки'] > 0].reset_index(drop=True)
 
@@ -40,7 +41,7 @@ scaler = MinMaxScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# ----------------------------- модель -----------------------------
+# Модель
 model = keras.Sequential([
     layers.Input(shape=(X_train.shape[1],)),
     layers.Dense(64, activation='relu'),
@@ -54,13 +55,13 @@ model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001),
 early_stopping = callbacks.EarlyStopping(
     monitor='val_loss', patience=20, restore_best_weights=True)
 
-model.fit(X_train, y_train, epochs=300, batch_size=32,
+model.fit(X_train, y_train, epochs=100, batch_size=32,
           validation_split=0.2, callbacks=[early_stopping], verbose=1)
 
 mae = np.mean(np.abs(model.predict(X_test).flatten() - y_test))
 print(f'MAE на тестовой выборке: {mae:.3f}')
 
-# ----------------------------- сохранение -----------------------------
+# Cохранение
 model.save('models/nn_model.keras')
 joblib.dump(scaler, 'models/scaler_nn.joblib')
 print('Модель и скейлер сохранены в models/')
