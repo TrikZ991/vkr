@@ -17,7 +17,8 @@
 ├── models/                # обученные модели (joblib / keras)
 ├── app.py                 # Streamlit-приложение
 ├── train_nn.py            # скрипт обучения нейронной сети
-├── requirements.txt
+├── environment.yml        # окружение Conda (полная сборка с нуля)
+├── requirements.txt       # зависимости для pip
 └── README.md
 ```
 
@@ -42,8 +43,24 @@
 
 ## Установка и запуск
 
+Требуется Python 3.9–3.12 (TensorFlow не поддерживает более новые версии).
+
+**Вариант 1. Conda:**
+
+```bash
+conda env create -f environment.yml
+conda activate ds
+```
+
+**Вариант 2. pip:**
+
 ```bash
 pip install -r requirements.txt
+```
+
+Запуск приложения:
+
+```bash
 streamlit run app.py
 ```
 

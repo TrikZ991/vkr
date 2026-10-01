@@ -4,6 +4,6 @@ scikit-learn
 matplotlib
 seaborn
 openpyxl
-tensorflow-cpu
+tensorflow
 streamlit
 joblib
